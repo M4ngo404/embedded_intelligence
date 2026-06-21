@@ -1,3 +1,4 @@
 data/emi_nav.db
 .DS_Store
 **/.DS_Store
+.ipynb_checkpoints
