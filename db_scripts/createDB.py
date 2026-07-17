@@ -35,6 +35,17 @@ CREATE TABLE IF NOT EXISTS ble_rssi (
     rssi         REAL,
     FOREIGN KEY (run_id) REFERENCES runs(run_id)
 );
+-- Manuell erfasste Tür-Referenzpunkte / Ground Truth
+CREATE TABLE IF NOT EXISTS groundtruth (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_id       TEXT NOT NULL,
+    tuer_id      TEXT NOT NULL,
+    timestamp_ms INTEGER NOT NULL,
+
+    FOREIGN KEY (run_id) REFERENCES runs(run_id),
+
+    UNIQUE (run_id, tuer_id, timestamp_ms)
+);
 """)
 conn.commit()
 print("DB + Schema erstellt ✓")
