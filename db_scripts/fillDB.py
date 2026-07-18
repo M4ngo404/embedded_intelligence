@@ -1,22 +1,22 @@
 import sqlite3, pandas as pd
 from pathlib import Path
 
-conn = sqlite3.connect("data/emi_nav.db")
+conn = sqlite3.connect("../data/emi_nav.db")
 cur = conn.cursor()
 
 runs_meta = [
-    ("R1", "R1_pickup_export_20260616_141816.csv", "2026-06-16", ""),
-    ("R2", "R2_pickup_export_20260616_150505.csv", "2026-06-16", ""),
-    ("R3", "R3_pickup_export_20260616_151247.csv", "2026-06-16", ""),
+    ("TR1", "T3_pickup_export_20251128_062231.csv", "2026-07-17", ""),
+    ("TR2", "T2_pickup_export_20251128_062333.csv", "2026-07-17", ""),
+    ("TR3", "T1_pickup_export_20251206_230839.csv", "2026-06-16", ""),
 ]
 cur.executemany("INSERT OR IGNORE INTO runs VALUES (?,?,?,?)", runs_meta)
 conn.commit()
 print("Runs eingetragen ✓")
 
 files = {
-    "R1": "data/raw_files/R1_pickup_export_20260616_141816.csv",
-    "R2": "data/raw_files/R2_pickup_export_20260616_150505.csv",
-    "R3": "data/raw_files/R3_pickup_export_20260616_151247.csv",
+    "TR1": "../data/raw_files/T3_pickup_export_20251128_062231.csv",
+    "TR2": "../data/raw_files/T2_pickup_export_20251128_062333.csv",
+    "RR3": "../data/raw_files/T1_pickup_export_20251206_230839.csv",
 }
 
 for run_id, path in files.items():
