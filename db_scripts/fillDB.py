@@ -25,7 +25,7 @@ GROUNDTRUTH_INPUT = [
     # run_id, tuer_id, timestamp_ms
     ("R1", "H01", "2026-06-16 14:16:04"),
     ("R1", "H02", "2026-06-16 14:16:11"),
-    ("R1", "T022", "2026-06-16 14:16:11"),
+    ("R1", "T022", "2026-06-16 14:16:32"),
     ("R1", "H03", "2026-06-16 14:16:46"),
     #R2
     ("R2", "H03", "2026-06-16 15:02:18"),
@@ -97,5 +97,67 @@ cur.executemany("""
 conn.commit()
 
 print(f"{len(GROUNDTRUTH_DATA)} Ground-Truth-Punkte verarbeitet ✓")
+
+SCALE = 0.2  # Meter pro Pixel
+
+# ---------------------------------------------------------------
+# Tür-Positionen (Pixel → Meter)
+# ---------------------------------------------------------------
+DOOR_DATA = [
+    ("H01",   600, 60, 0),
+    ("H02",   587, 31, 0),
+    ("H03",   396, 30, 0),
+    ("T016",  626, 17, 0),
+    ("T021",  508, 22, 0),
+    ("T022",  475, 22, 0),
+    ("H11",   600, 60, 1),
+    ("H12",   587, 31, 1),
+    ("H13",   396, 30, 1),
+    ("T109c", 480, 40, 1),
+    ("T125",  325, 33, 1),
+]
+
+cur.executescript("""
+    CREATE TABLE IF NOT EXISTS door_positions (
+        tuer_id  TEXT PRIMARY KEY,
+        x_m      REAL NOT NULL,
+        y_m      REAL NOT NULL,
+        floor    INTEGER NOT NULL
+    );
+""")
+
+cur.executemany("""
+    INSERT OR REPLACE INTO door_positions (tuer_id, x_m, y_m, floor)
+    VALUES (?, ?, ?, ?)
+""", [(tid, x * SCALE, y * SCALE, f) for tid, x, y, f in DOOR_DATA])
+
+# ---------------------------------------------------------------
+# Beacon-Positionen (Pixel → Meter)
+# ---------------------------------------------------------------
+BEACON_DATA = [
+    ("arrive_emi1", 370.0, 47.0, 1),
+    ("arrive_emi2", 445.0, 40.0, 1),
+    ("arrive_emi3", 588.0, 20.0, 1),
+    ("arrive_emi4", 590.0, 20.0, 0),
+    ("arrive_emi8", 370.0, 50.0, 0),
+    ("arrive_emi10", 510.0, 40.0, 0),
+]
+
+cur.executescript("""
+    CREATE TABLE IF NOT EXISTS beacon_positions (
+        beacon_name  TEXT PRIMARY KEY,
+        x_m          REAL NOT NULL,
+        y_m          REAL NOT NULL,
+        floor        INTEGER NOT NULL
+    );
+""")
+
+cur.executemany("""
+    INSERT OR REPLACE INTO beacon_positions (beacon_name, x_m, y_m, floor)
+    VALUES (?, ?, ?, ?)
+""", [(name, x * SCALE, y * SCALE, f) for name, x, y, f in BEACON_DATA])
+
+conn.commit()
+print("Door & Beacon Positionen eingetragen ✓")
 
 conn.close()
