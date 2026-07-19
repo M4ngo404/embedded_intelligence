@@ -41,11 +41,11 @@ CREATE TABLE IF NOT EXISTS groundtruth (
     run_id       TEXT NOT NULL,
     tuer_id      TEXT NOT NULL,
     timestamp_ms INTEGER NOT NULL,
-
+    FOREIGN KEY (run_id) REFERENCES runs(run_id),
     FOREIGN KEY (run_id) REFERENCES runs(run_id),
 
     UNIQUE (run_id, tuer_id, timestamp_ms)
-);
+);        
 """)
 conn.commit()
 print("DB + Schema erstellt ✓")
